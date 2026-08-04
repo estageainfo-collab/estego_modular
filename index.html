@@ -161,16 +161,18 @@
 
   .medallero-preview {
     width: 90px;
-    height: 105px;
-    border-radius: 8px 8px 0 0;
-    clip-path: polygon(0% 30%, 50% 0%, 100% 30%, 100% 100%, 0% 100%);
-    background: #2a2a2a;
-    border: 2px solid rgba(255,255,255,0.15);
+    height: 104px;
     position: relative;
-    transition: background 0.3s;
+    transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .hex-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
   }
 
   .medal-hang {
@@ -199,14 +201,6 @@
     border-radius: 2px;
     background: #1a1a1a;
     transition: background 0.3s;
-  }
-
-  .riel-preview {
-    width: 100px; height: 8px;
-    background: #333;
-    border-radius: 4px;
-    border: 2px solid rgba(255,255,255,0.15);
-    margin-top: 4px;
   }
 
   /* SUMMARY */
@@ -369,9 +363,6 @@
           <input type="text" class="input-field" id="tiempo" placeholder="Tiempo · Ej: 3:19:45">
         </div>
         <div>
-          <input type="text" class="input-field" id="bib" placeholder="BIB · Ej: 4620">
-        </div>
-        <div>
           <input type="text" class="input-field" id="fecha" placeholder="Fecha · Ej: 07 Sept. 2025">
         </div>
         <div>
@@ -380,7 +371,7 @@
       </div>
 
       <div class="panal-hint">
-        🦌 ¿Tienes más medallas? Puedes ordenar un Estego Modular por cada carrera y armar tu panal en la pared. Cada uno se conecta al siguiente con el sistema de riel.
+        🦌 ¿Tienes más medallas? Puedes ordenar un Estego Modular por cada carrera y armar tu panal en la pared. Puedes atornillarlos uno al lado del otro en la pared.
       </div>
     </div>
 
@@ -393,6 +384,9 @@
     <!-- Preview -->
     <div class="preview-wrap">
       <div class="medallero-preview" id="medalleroPreview">
+        <svg class="hex-svg" id="hexSvg" viewBox="0 0 90 104" xmlns="http://www.w3.org/2000/svg">
+          <polygon id="hexPoly" points="45,2 88,26 88,78 45,102 2,78 2,26" fill="#2a2a2a" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        </svg>
         <div class="medal-hang"></div>
       </div>
       <div class="accesorio-preview" id="accesorioPreview">
@@ -400,7 +394,6 @@
         <div class="acc-line" id="accLine2" style="width:50%"></div>
         <div class="acc-line" id="accLine3" style="width:60%"></div>
       </div>
-      <div class="riel-preview"></div>
     </div>
 
     <div class="summary-line">
@@ -422,7 +415,7 @@
 
     <div class="total-line">
       <div class="total-label">TOTAL</div>
-      <div class="total-price">$40.00</div>
+      <div class="total-price">$25.00</div>
     </div>
     <div class="abono-note">Abono de $5 vía Yappy para iniciar · Entrega en 3 a 4 días hábiles</div>
 
@@ -496,8 +489,11 @@ function updatePreview() {
   const lines = document.querySelectorAll('.acc-line');
 
   if (state.medalleroColor) {
-    medallero.style.background = state.medalleroColor.hex;
-    medallero.style.borderColor = state.medalleroColor.hex === '#1a1a1a' ? 'rgba(255,255,255,0.25)' : 'transparent';
+    const poly = document.getElementById('hexPoly');
+    if (poly) {
+      poly.setAttribute('fill', state.medalleroColor.hex);
+      poly.setAttribute('stroke', state.medalleroColor.hex === '#1a1a1a' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)');
+    }
   }
 
   if (state.accesorioFondo) {
@@ -524,7 +520,6 @@ function sendOrder(e) {
 
   const distancia = document.getElementById('distancia').value.trim();
   const tiempo = document.getElementById('tiempo').value.trim();
-  const bib = document.getElementById('bib').value.trim();
   const fecha = document.getElementById('fecha').value.trim();
 
   let msg = `¡Hola! 👋 Quiero ordenar mi Estego Modular.\n\n`;
@@ -536,9 +531,8 @@ function sendOrder(e) {
   msg += `Evento: ${nombreCarrera}\n`;
   if (distancia) msg += `Distancia: ${distancia}\n`;
   if (tiempo) msg += `Tiempo: ${tiempo}\n`;
-  if (bib) msg += `BIB: ${bib}\n`;
   if (fecha) msg += `Fecha: ${fecha}\n`;
-  msg += `\n*TOTAL: $40.00*\n`;
+  msg += `\n*TOTAL: $25.00*\n`;
   msg += `\n¡Gracias por ser parte de Estagea! 🦌`;
 
   window.open(`https://wa.me/50764487701?text=${encodeURIComponent(msg)}`, '_blank');
